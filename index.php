@@ -26,7 +26,7 @@ if(isset($_COOKIE['cookie_username'])){
 }
 
 if(isset($_SESSION['session_username'])){
-    header('location:member.php');
+    header("location:logout.php");
     exit();
 }
 
@@ -36,16 +36,16 @@ if(isset($_POST['login'])){
     $ingat = $_POST['ingat'];
 
     if($username == "" or $password == ""){
-        $error .= "<li>Silahkan masukan username dan password</li>";
+        $error .= "<li>Silahkan masukan username dan password.</li>";
     }else{
         $sql1 = "SELECT * FROM users WHERE username = '$username'";
         $q1 = mysqli_query($koneksi, $sql1);
         $r1 = mysqli_fetch_array($q1);
 
         if($r1['username']== ''){
-            $error .="<li>Username <b>$username</b> tidak tersedia</li>";
+            $error .="<li>Username <b>$username</b> tidak tersedia.</li>";
         }elseif($r1['password'] != md5($password)){
-            $error .="<li>Password yang dimasukkan tidak sesuai</li>";
+            $error .="<li>Password yang dimasukkan tidak sesuai.</li>";
         }
 
         if(empty($error)){
@@ -63,7 +63,7 @@ if(isset($_POST['login'])){
                 $cookie_time = time() + (60 * 60 * 24 * 30);
                 setcookie($cookie_name, $cookie_value, $cookie_time, "/");
             }
-            header("location:member.php");
+            header("location:logout.php");
         }
     }
 }
