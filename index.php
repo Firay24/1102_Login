@@ -1,5 +1,6 @@
 <?php
 session_start();
+
 $host_db = "localhost";
 $user_db = "root";
 $pass_db = "";
@@ -10,6 +11,25 @@ $error = "";
 $username = "";
 $ingat = "";
 
+if(isset($_COOKIE['cookie_username'])){
+    $cookie_username = $_COOKIE['cookie_username'];
+    $cookie_password = $_COOKIE['cookie_password'];
+
+    $sql1 = "SELECT * FROM users WHERE username = '$cookie_username'";
+    $q1 = mysqli_query($koneksi, $sql1); 
+    $r1 = mysqli_fetch_array($q1);
+    
+    if($r1['password'] == $cookie_password){
+        $_SESSION['session_username'] == $cookie_username;
+        $_SESSION['session_password'] == $cookie_password;
+    }
+}
+
+if(isset($_SESSION['session_username'])){
+    header('location:member.php');
+    exit();
+}
+
 if(isset($_POST['login'])){
     $username = $_POST['username'];
     $password = $_POST['password'];
@@ -18,7 +38,7 @@ if(isset($_POST['login'])){
     if($username == "" or $password == ""){
         $error .= "<li>Silahkan masukan username dan password</li>";
     }else{
-        $sql1 = "SELECT * FROM login WHERE username = '$username'";
+        $sql1 = "SELECT * FROM users WHERE username = '$username'";
         $q1 = mysqli_query($koneksi, $sql1);
         $r1 = mysqli_fetch_array($q1);
 
@@ -43,7 +63,7 @@ if(isset($_POST['login'])){
                 $cookie_time = time() + (60 * 60 * 24 * 30);
                 setcookie($cookie_name, $cookie_value, $cookie_time, "/");
             }
-            header("location:anggota.php");
+            header("location:member.php");
         }
     }
 }
@@ -63,12 +83,12 @@ if(isset($_POST['login'])){
     <div id="loginbox" style="margin-top:50px;" class="mainbox col-md-6 col-md-offset-3 col-sm-8 col-sm-offset-2">                    
         <div class="panel panel-info" >
             <div class="panel-heading">
-                <div class="panel-title">Login dan Masuk Ke Sistem</div>
+                <div class="panel-title">Masuk Ke Sistem</div>
             </div>      
             <div style="padding-top:30px" class="panel-body" >
-                <?php if($err){ ?>
+                <?php if($error){ ?>
                     <div id="login-alert" class="alert alert-danger col-sm-12">
-                        <ul><?php echo $err ?></ul>
+                        <ul><?php echo $error ?></ul>
                     </div>
                 <?php } ?>                
                 <form id="loginform" class="form-horizontal" action="" method="post" role="form">       
@@ -83,7 +103,7 @@ if(isset($_POST['login'])){
                     <div class="input-group">
                         <div class="checkbox">
                         <label>
-                            <input id="login-remember" type="checkbox" name="ingataku" value="1" <?php if($ingataku == '1') echo "checked"?>> Ingat Aku
+                            <input id="login-remember" type="checkbox" name="ingat" value="1" <?php if($ingat == '1') echo "checked"?>> Ingat Aku
                         </label>
                         </div>
                     </div>
